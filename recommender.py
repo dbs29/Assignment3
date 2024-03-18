@@ -41,7 +41,7 @@ class Recommender(object):
     
     def train_user_euclidean(self, data_set, userId):
         dfeuc = data_set.copy()
-        sim_wieghts = {}
+        sim_weights = {}
         for user in dfeuc.columns[1:]:
             if (user != userId) :
                 df_subset = dfeuc[[userId, user]][dfeuc[userId].notnull() & dfeuc[user].notnull()]
