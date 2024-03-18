@@ -51,13 +51,32 @@ class Recommender(object):
         return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
     
     def train_user_manhattan(self, data_set, userId):
-        return {} # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
+        dfmanhat = data_set.copy()
+        sim_weights = {}
+        for user in dfmanhat.columns[1:]:
+            if (user != userId) :
+                df_subset = dfmanhat[[userId, user]][dfmanhat[userId].notnull() & dfmanhat[user].notnull()]
+                dist = cityblock(df_subset[userId], df_subset[user])
+                sim_weights[user] = 1.0 / (1.0 + dist)
+        return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
 
     def train_user_cosine(self, data_set, userId):
-        return {} # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
+        dfcosine = data_set.copy()
+        sim_weights = {}
+        for user in dfcos.columns[1:]:
+            if (user !=userId) :
+                df_subset = dfcosine[[userId, user]][dfcosine[userId].notnull() & dfcosine[user].notnull()]
+                sim_weights[user] = cosine(df_subset[userId, df_subset[user])
+        return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
    
     def train_user_pearson(self, data_set, userId):
-        return {} # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
+        dfpearson = data_set.copy()
+        sim_weights = {}
+        for user in dfpearson.columns[1:]:
+            if (user!= userId):
+                df_subset = dfpearson[[userId, user]][dfpearson[userId].notnull() & dfpearson[user].notnull()]
+                sim_weights[user] = pearson(df_subset[userId], df_subset[user])[0]
+        return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
 
     def train_user(self, data_set, distance_function, userId):
         if distance_function == 'euclidean':
