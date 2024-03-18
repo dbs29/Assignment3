@@ -75,7 +75,7 @@ class Recommender(object):
         for user in dfpearson.columns[1:]:
             if (user!= userId):
                 df_subset = dfpearson[[userId, user]][dfpearson[userId].notnull() & dfpearson[user].notnull()]
-                sim_weights[user] = pearson(df_subset[userId], df_subset[user])[0]
+                sim_weights[user] = pearsonr(df_subset[userId], df_subset[user])[0]
         return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
 
     def train_user(self, data_set, distance_function, userId):
