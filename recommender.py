@@ -105,29 +105,41 @@ class Recommender(object):
         return ratings # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
 
     def predict_user_existing_ratings_top_k(self, data_set, sim_weights, userId, k):
+        result = []
         
-        prediction = data_set.copy()
-        sim = sorted(sim_weights.items(), key = lambda x : x[1], reverse = True)[:k]
-        sim = dict(sim)
-        print(sim)
-        predictRate = []
-        for index, row in prediction, iterrows() :
-            if not np.isnan(row[userId]) :
-                predict = 0
-                total = 0
-                rating = prediction.iloc[index][1:]
-                for user in prediction.columns[1:] :
-                    if (user in sim.keys()) :
-                        predict += sim[user] * rating[user]
-                        total += sim[user]
-                    else :
-                        print('fail')
-                if (total == 0) :
-                    predict = 0
-                else :
-                    predict /= total
-                predictRate.append((row['movieId'], predict))
-        return predRate # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
+        # Get the movies that the user has already rated
+        user_existing_ratings = self.get_user_existing_ratings(data_set, userId)
+
+        # Select the top k similar users
+        similar_users = self.get_top_k(sim_weights, k)
+
+        #loop through each movie that the user has rated 
+        for movieId, ratings in user_existing_ratings:
+
+            #weights for the rating and total weight
+            total_weighted_rating = 0.0
+            total_weight = 0.0
+            #returning from top k, so loop through all the users
+            for sim_users in similar_users:
+                #getting the weight of the similar user
+                sim_user_weight = sim_weights[sim_users]
+
+                #get user ratings for other user 
+                sim_users_existing_ratings = self.get_user_existing_ratings(data_set, sim_users)
+                dict_sim_ratings = dict(sim_users_existing_ratings)
+
+                if movieId in dict_sim_ratings.keys():
+                    #using similar user rating to predict the user rating
+                    similar_user_rating = dict_sim_ratings[movieId]
+                    #calculation for the weights
+                    total_weighted_rating += sim_user_weight * similar_user_rating
+
+                    total_weight += sim_user_weight
+
+            if total_weight > 0:
+                predicted_rating = total_weighted_rating / total_weight
+                result.append((movieId, predicted_rating))
+        return result # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
     
     def evaluate(self, existing_ratings, predicted_ratings):
         return {'rmse':0, 'ratio':0} # dictionary with an rmse value and a ratio. e.g. {'rmse':1.2, 'ratio':0.5}
