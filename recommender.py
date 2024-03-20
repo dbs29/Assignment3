@@ -91,10 +91,42 @@ class Recommender(object):
             return None
 
     def get_user_existing_ratings(self, data_set, userId):
-        return [] # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
+
+        dfrating = data_set.copy()
+        rating = []
+
+
+        for user in dfrating.columns[1:] :
+            if (userId == user) :
+                ratings = dfrating[['movieId', user]][dfrating[user].notnull()].values
+                rating = [tuple(i) for i in ratings]
+                break
+        return ratings # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
 
     def predict_user_existing_ratings_top_k(self, data_set, sim_weights, userId, k):
-        return [] # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
+        
+        prediction = data_set.copy()
+        sim = sorted(sim_weights.items(), key = lambda x : x[1], reverse = True)[:k]
+        sim = dict(sim)
+        print(sim)
+        predictRate = []
+        for index, row in prediction,iterrows() :
+            if not np.isnan(row[userId]) :
+                predict = 0
+                total = 0
+                rating = prediction.iloc[index][1:]
+                for user in prediction.columns[1:] :
+                    if (user in sim.keys()) :
+                        predict += sim[user] * rating[user]
+                        total += sim[user]
+                    else :
+                        print('fail')
+                if (total == 0) :
+                    predict = 0
+                else :
+                    predict /= total
+                predictions.append((row['movieId', prediction))
+        return predictions # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
     
     def evaluate(self, existing_ratings, predicted_ratings):
         return {'rmse':0, 'ratio':0} # dictionary with an rmse value and a ratio. e.g. {'rmse':1.2, 'ratio':0.5}
