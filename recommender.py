@@ -125,7 +125,7 @@ class Recommender(object):
                     predict = 0
                 else :
                     predict /= total
-                predictions.append((row['movieId', prediction))
+                predictions.append((row['movieId'], prediction))
         return predictions # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
     
     def evaluate(self, existing_ratings, predicted_ratings):
