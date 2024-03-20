@@ -140,7 +140,14 @@ class Recommender(object):
                 predicted_rating = total_weighted_rating / total_weight
                 result.append((movieId, predicted_rating))
         return result # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
-    
+
+    def get_top_k(self, sim_weights, k ):
+        # Sort the list of similarity scores in desc order
+        sim_scores_sorted = sorted(sim_weights.items(), key=lambda x:x[1], reverse= True)
+        # return top k user scores
+        top_k_users = [x[0] for x in sim_scores_sorted[:k]]
+        return top_k_users
+        
     def evaluate(self, existing_ratings, predicted_ratings):
         return {'rmse':0, 'ratio':0} # dictionary with an rmse value and a ratio. e.g. {'rmse':1.2, 'ratio':0.5}
     
