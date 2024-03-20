@@ -63,7 +63,7 @@ class Recommender(object):
     def train_user_cosine(self, data_set, userId):
         dfcosine = data_set.copy()
         sim_weights = {}
-        for user in dfcos.columns[1:]:
+        for user in dfcosine.columns[1:]:
             if (user !=userId) :
                 df_subset = dfcosine[[userId, user]][dfcosine[userId].notnull() & dfcosine[user].notnull()]
                 sim_weights[user] = cosine(df_subset[userId], df_subset[user])
