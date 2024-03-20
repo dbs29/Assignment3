@@ -63,17 +63,18 @@ class Recommender(object):
     def train_user_cosine(self, data_set, userId):
         dfcosine = data_set.copy()
         sim_weights = {}
-        for user in dfcosine.columns[1:]:
-            if (user !=userId) :
+        for user in dfcosine.columns[1:] :
+            if (user != userId) :
                 df_subset = dfcosine[[userId, user]][dfcosine[userId].notnull() & dfcosine[user].notnull()]
                 sim_weights[user] = cosine(df_subset[userId], df_subset[user])
+                
         return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
    
     def train_user_pearson(self, data_set, userId):
         dfpearson = data_set.copy()
         sim_weights = {}
         for user in dfpearson.columns[1:]:
-            if (user!= userId):
+            if (user != userId):
                 df_subset = dfpearson[[userId, user]][dfpearson[userId].notnull() & dfpearson[user].notnull()]
                 sim_weights[user] = pearsonr(df_subset[userId], df_subset[user])[0]
         return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
@@ -110,7 +111,7 @@ class Recommender(object):
         sim = dict(sim)
         print(sim)
         predictRate = []
-        for index, row in prediction,iterrows() :
+        for index, row in prediction, iterrows() :
             if not np.isnan(row[userId]) :
                 predict = 0
                 total = 0
@@ -125,8 +126,8 @@ class Recommender(object):
                     predict = 0
                 else :
                     predict /= total
-                predictions.append((row['movieId'], prediction))
-        return predictions # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
+                predictRate.append((row['movieId'], predict))
+        return predRate # list of tuples with movieId and rating. e.g. [(32, 4.0), (50, 4.0)]
     
     def evaluate(self, existing_ratings, predicted_ratings):
         return {'rmse':0, 'ratio':0} # dictionary with an rmse value and a ratio. e.g. {'rmse':1.2, 'ratio':0.5}
