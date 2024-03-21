@@ -70,7 +70,8 @@ class Recommender(object):
                     sim_weights[user] = 0
                 else:
                     sim_weights[user] = (1 - cosine(df_subset[userId], df_subset[user]))
-     return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
+         
+        return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
    
     def train_user_pearson(self, data_set, userId):
         dfpearson = data_set.copy()
