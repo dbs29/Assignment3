@@ -61,14 +61,16 @@ class Recommender(object):
         return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
 
     def train_user_cosine(self, data_set, userId):
-        result = {}
-        for user in data_set.columns:
-            if(user =='movieId' or user == userId):
-                continue
-            df_subset = data_set[[userId, user]][data_set[userId].notnull() & data_set[user].notnull()]
-            distance = cosine(df_subset[userId], df_subset[user])
-            result[user] = distance
-            return result # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
+        sim_weights = {}
+
+        for user in data_set.columns[1:]:
+            if (user != userId):
+                df_subset = data_set[[userId, user]][data_set[userId].notnull() & data_set[user].notnull()]
+                if (df_subset.empty):
+                    sim_weights[user] = 0
+                else:
+                    sim_weights[user] = (1 - cosine(df_subset[userId], df_subset[user]))
+     return sim_weights # dictionary of weights mapped to users. e.g. {"0331949b45":1.0, "1030c5a8a9":2.5}
    
     def train_user_pearson(self, data_set, userId):
         dfpearson = data_set.copy()
